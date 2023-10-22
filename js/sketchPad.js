@@ -10,9 +10,16 @@ const SketchPad = (container, size = 400) => {
     background-color:white;
     box-shadow: 0px 0px 10px 2px black;
   `;
+
+  const undoBtn = document.createElement("button");
+  undoBtn.innerText = "UNDO";
+
   container.appendChild(canvas);
+  container.appendChild(document.createElement("br"));
+  container.appendChild(undoBtn);
 
   addEventListeners();
+  redraw();
 
   function addEventListeners() {
     canvas.onmousedown = (evt) => {
@@ -50,11 +57,22 @@ const SketchPad = (container, size = 400) => {
     canvas.ontouchend = () => {
       canvas.onmouseup();
     };
+
+    undoBtn.onclick = () => {
+      paths.pop();
+      redraw();
+    };
   }
 
   function redraw() {
     ctx.clearRect(0, 0, size, size);
     draw.paths(ctx, paths);
+
+    if (paths.length > 0) {
+      undoBtn.disabled = false;
+    } else {
+      undoBtn.disabled = true;
+    }
   }
 
   function getMouse(evt) {
