@@ -33,8 +33,22 @@ const SketchPad = (container, size = 400) => {
       }
     };
 
-    canvas.onmouseup = (evt) => {
+    canvas.onmouseup = () => {
       isDrawing = false;
+    };
+
+    canvas.ontouchstart = (evt) => {
+      const loc = evt.touches[0];
+      canvas.onmousedown(loc);
+    };
+
+    canvas.ontouchmove = (evt) => {
+      const loc = evt.touches[0];
+      canvas.onmousemove(loc);
+    };
+
+    canvas.ontouchend = () => {
+      canvas.onmouseup();
     };
   }
 
