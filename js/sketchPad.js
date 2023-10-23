@@ -40,7 +40,7 @@ const SketchPad = (container, size = 400) => {
       }
     };
 
-    canvas.onmouseup = () => {
+    document.onmouseup = () => {
       isDrawing = false;
     };
 
@@ -54,7 +54,7 @@ const SketchPad = (container, size = 400) => {
       canvas.onmousemove(loc);
     };
 
-    canvas.ontouchend = () => {
+    document.ontouchend = () => {
       canvas.onmouseup();
     };
 
