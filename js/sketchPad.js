@@ -83,5 +83,17 @@ const SketchPad = (container, size = 400) => {
     ];
   }
 
-  return {};
+  function getPaths() {
+    return paths;
+  }
+
+  function reset() {
+    paths = [];
+    redraw();
+  }
+
+  return {
+    getPaths,
+    reset,
+  };
 };

@@ -5,20 +5,106 @@
       name="viewport"
       content="width=device-width,maximum-scale=0.9,user-scalable=0"
     />
+    <meta charset="UTF-8" />
     <title>Data Creator</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div id="content">
       <h1>Data Creator</h1>
+      <div>
+        <input id="username" type="text" placeholder="Type your name" />
+        <span id="instructions"></span>
+        <button id="advance" onclick="start();">START</button>
+      </div>
       <br />
-      <div id="sketchPadContainer"></div>
+      <div id="sketchPadContainer" style="visibility: hidden"></div>
     </div>
     <script src="js/draw.js"></script>
     <script src="js/sketchPad.js"></script>
 
     <script>
+      let index = 0;
+      const data = {
+        username: null,
+        session: new Date().getTime(),
+        drawings: {},
+      };
+
+      const labels = [
+        "car",
+        "fish",
+        "house",
+        "tree",
+        "bicycle",
+        "guitar",
+        "pencil",
+        "clock",
+      ];
+
       const sketchPad = SketchPad(sketchPadContainer);
+
+      function start() {
+        if (username.value === "") {
+          alert("Please type your name first");
+          return;
+        }
+
+        data.username = username.value;
+        username.style.display = "none";
+        sketchPadContainer.style.visibility = "visible";
+
+        advance.innerText = "NEXT";
+        advance.onclick = next;
+
+        instructions.innerText = `Please draw a ${labels[index]}`;
+      }
+
+      function next() {
+        const paths = sketchPad.getPaths();
+        if (paths.length === 0) {
+          alert("Draw something first.");
+          return;
+        }
+
+        const label = labels[index];
+        data.drawings[label] = paths;
+
+        index++;
+        const nextLabel = labels[index];
+
+        if (nextLabel) {
+          instructions.innerText = `Please draw a ${nextLabel}`;
+          sketchPad.reset();
+        } else {
+          instructions.innerText = "Thank you!";
+          advance.innerText = "SAVE";
+          sketchPadContainer.style.visibility = "hidden";
+          advance.onclick = save;
+        }
+      }
+
+      function save() {
+        advance.style.display = "none";
+        instructions.innerText =
+          "Take the downloaded file a put with the dataset!";
+
+        const element = document.createElement("a");
+        const fileName = `${data.session}.json`;
+
+        element.setAttribute("download", fileName);
+        element.setAttribute(
+          "href",
+          `data:text/plain;charset=utf-8,${encodeURIComponent(
+            JSON.stringify(data)
+          )}`
+        );
+        element.style.display = "none";
+
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
     </script>
   </body>
 </html>
